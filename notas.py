@@ -1,8 +1,45 @@
 import pandas as pd
 
+class Aluno:
+    AV1 = 0
+    AV2 = 0
+    AV3 = 0
+    AV4 = 0
 
-def media_by_bimestre(students_data, bim: str):
-    students = []
+def media_by_bimestre(students_data):
+
+    BIM1 = []
+    BIM2 = []
+    BIM3 = []
+
+    for value in students_data.values:
+        if value[3] == "1º BIM":
+            aluno = procurarAluno(BIM1, value[0], value[2])
+            if aluno is None:
+                aluno = criarAluno(value)
+                BIM1.append(aluno)
+            setarNota(value[1],value[4],aluno)
+        elif value[3] == "2º BIM":
+            aluno = procurarAluno(BIM2, value[0], value[2])
+            if aluno is None:
+                aluno = criarAluno(value)
+                BIM2.append(aluno)
+            setarNota(value[1], value[4], aluno)
+        elif value[3] == "3º BIM":
+            aluno = procurarAluno(BIM3, value[0], value[2])
+            if aluno is None:
+                aluno = criarAluno(value)
+                BIM3.append(aluno)
+            setarNota(value[1], value[4], aluno)
+
+    criarExcel(BIM1, "1º BIM")
+    criarExcel(BIM2, "2º BIM")
+    criarExcel(BIM3, "3º BIM")
+
+    return "Finalizado"
+
+def criarExcel(BIM, nomeBim):
+
     RA = []
     DESCPROVA = []
     DISCIPLINA = []
@@ -11,70 +48,89 @@ def media_by_bimestre(students_data, bim: str):
     CODTURMA = []
     SERIE = []
     CONCEITO = []
-    AV1_BIM1 = 0
-    AV2_BIM1 = 0
-    AV3_BIM1 = 0
-    AV4_BIM1 = 0
-    for value in students_data.values:
-        if value[3] == bim:
-            if str(value[0]) + value[2] + value[3] not in students:
-                for value2 in students_data.values:
-                    if value2[0] == value[0]:
-                        if value2[3] == bim:
-                            if value2[2] == value[2]:
-                                if value2[1] == 'PI':
-                                    AV1_BIM1 = value2[4]
-                                if value2[1] == 'ST':
-                                    AV2_BIM1 = value2[4]
-                                if value2[1] == 'BQ':
-                                    AV3_BIM1 = value2[4]
-                                if value2[1] == 'SP':
-                                    AV4_BIM1 = value2[4]
-                if value[3] == bim:
-                    average_in_the_bimester_by_discipline = ((AV1_BIM1 * 2) + (AV2_BIM1 * 3) + (AV3_BIM1 * 1) + (
-                            AV4_BIM1 * 1)) / 7
-                    
-                    if (average_in_the_bimester_by_discipline <=0):
-                        CONCEITO.append("F")
-                    elif (average_in_the_bimester_by_discipline >0 and average_in_the_bimester_by_discipline <=1):
-                        CONCEITO.append("D")
-                    elif (average_in_the_bimester_by_discipline >1 and average_in_the_bimester_by_discipline <=2):
-                        CONCEITO.append("C")
-                    elif (average_in_the_bimester_by_discipline >2 and average_in_the_bimester_by_discipline <=3):
-                        CONCEITO.append("B")
-                    elif (average_in_the_bimester_by_discipline >3 and average_in_the_bimester_by_discipline <=4):
-                        CONCEITO.append("A")
-                        
-                    RA.append(value[0])
-                    DESCPROVA.append(value[1])
-                    DISCIPLINA.append(value[2])
-                    MEDIA.append(average_in_the_bimester_by_discipline)
-                    ETAPADESCRICAO.append(value[3])
-                    CODTURMA.append(value[5])
-                    SERIE.append(value[6])
-                    students.append(str(value[0]) + value[2] + value[3])
-                    print(bim)
+
+    for aluno in BIM:
+
+        RA.append(aluno.RA)
+        DESCPROVA.append(aluno.DESCPROVA)
+        DISCIPLINA.append(aluno.DISCIPLINA)
+        average_in_the_bimester_by_discipline = ((aluno.AV1 * 2) + (aluno.AV2 * 3) + (aluno.AV3 * 1) + (
+                aluno.AV4 * 1)) / 7
+
+        if average_in_the_bimester_by_discipline < 0.5:
+            CONCEITO.append("F")
+        elif 0.5 <= average_in_the_bimester_by_discipline < 0.75:
+            CONCEITO.append("D-")
+        elif 0.75 <= average_in_the_bimester_by_discipline < 1.25:
+            CONCEITO.append("D")
+        elif 1.25 <= average_in_the_bimester_by_discipline < 1.5:
+            CONCEITO.append("D+")
+        elif 1.5 <= average_in_the_bimester_by_discipline < 1.75:
+            CONCEITO.append("C-")
+        elif 1.75 <= average_in_the_bimester_by_discipline < 2.25:
+            CONCEITO.append("C")
+        elif 2.25 <= average_in_the_bimester_by_discipline < 2.5:
+            CONCEITO.append("C+")
+        elif 2.5 <= average_in_the_bimester_by_discipline < 2.75:
+            CONCEITO.append("B-")
+        elif 2.75 <= average_in_the_bimester_by_discipline < 3.2:
+            CONCEITO.append("B")
+        elif 3.2 <= average_in_the_bimester_by_discipline < 3.4:
+            CONCEITO.append("B+")
+        elif 3.4 <= average_in_the_bimester_by_discipline < 3.6:
+            CONCEITO.append("A-")
+        elif 3.6 <= average_in_the_bimester_by_discipline < 3.75:
+            CONCEITO.append("A")
+        elif 3.75 <= average_in_the_bimester_by_discipline:
+            CONCEITO.append("A+")
+        else:
+            print(average_in_the_bimester_by_discipline)
+
+        MEDIA.append(average_in_the_bimester_by_discipline)
+
+        ETAPADESCRICAO.append(aluno.ETAPADESCRICAO)
+        CODTURMA.append(aluno.CODTURMA)
+        SERIE.append(aluno.SERIE)
 
     alunos = {"RA": RA, "DESCPROVA": DESCPROVA, "DISCIPLINA": DISCIPLINA, "MEDIA": MEDIA, "CONCEITO": CONCEITO,
               "ETAPADESCRICAO": ETAPADESCRICAO, "CODTURMA": CODTURMA, "SERIE": SERIE}
 
     dataframe = pd.DataFrame(alunos)
-    dataframe.to_excel('MEDIA_CONCEITO_GREAT_'+bim+'.xlsx', sheet_name=bim)
+    dataframe.to_excel('media_alunos_conceito' + nomeBim + '.xlsx', sheet_name=nomeBim)
 
-    return "sucesso " + bim
+    print("Terminado: " + nomeBim)
 
+
+def setarNota(DESCPROVA,NOTAFINAL, aluno):
+    if DESCPROVA == 'PI':
+        aluno.AV1 = NOTAFINAL
+    elif DESCPROVA == 'ST':
+        aluno.AV2 = NOTAFINAL
+    elif DESCPROVA == 'BQ':
+        aluno.AV3 = NOTAFINAL
+    elif DESCPROVA == 'SP':
+        aluno.AV4 = NOTAFINAL
+
+def criarAluno(value):
+    aluno = Aluno()
+    aluno.RA = value[0]
+    aluno.DESCPROVA = value[1]
+    aluno.DISCIPLINA = value[2]
+    aluno.ETAPADESCRICAO = value[3]
+    aluno.CODTURMA = value[5]
+    aluno.SERIE = value[6]
+
+    return aluno
+
+
+def procurarAluno(lista_alunos, RA, DISCIPLINA):
+    for aluno in lista_alunos:
+        if aluno.RA == RA:
+            if aluno.DISCIPLINA == DISCIPLINA:
+                return aluno
 
 if __name__ == '__main__':
     data_students = pd.read_excel('Boletim.XLSX', engine='openpyxl',
                                   usecols='E,K,L,N,O,X,AE')
 
-    BIM1 = '1º BIM'
-    BIM2 = '2º BIM'
-    BIM3 = '3º BIM'
-
-    result_bim1 = media_by_bimestre(data_students, BIM1)
-    print(result_bim1)
-    result_bim2 = media_by_bimestre(data_students, BIM2)
-    print(result_bim2)
-    result_bim3 = media_by_bimestre(data_students, BIM3)
-    print(result_bim3)
+    media_by_bimestre(data_students)
