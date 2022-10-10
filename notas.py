@@ -59,7 +59,7 @@ def media_by_bimestre(students_data, bim: str):
               "ETAPADESCRICAO": ETAPADESCRICAO, "CODTURMA": CODTURMA, "SERIE": SERIE}
 
     dataframe = pd.DataFrame(alunos)
-    dataframe.to_excel('media_alunos_conceito_doido'+bim+'.xlsx', sheet_name=bim)
+    dataframe.to_excel('MEDIA_CONCEITO_GREAT_'+bim+'.xlsx', sheet_name=bim)
 
     return "sucesso " + bim
 
